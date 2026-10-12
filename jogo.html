@@ -1,0 +1,218 @@
+ <!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>🎯 Jogo de Perguntas</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;min-height:100%;}
+body{
+    background:linear-gradient(135deg,#e3f2fd,#bbdefb);
+    font-family:Arial,sans-serif;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:15px;
+}
+.caixa{
+    background:#fff;
+    width:100%;
+    min-height:95vh;
+    border-radius:20px;
+    padding:40px 25px;
+    box-shadow:0 6px 20px rgba(0,0,0,0.15);
+    display:flex;
+    flex-direction:column;
+}
+h1{color:#1976d2;font-size:clamp(24px,6vw,36px);margin-bottom:20px;text-align:center;}
+.nivel{
+    display:inline-block;
+    padding:8px 20px;
+    border-radius:25px;
+    font-size:clamp(14px,3vw,18px);
+    margin-bottom:25px;
+    font-weight:bold;
+    align-self:center;
+}
+.n1{background:#c8e6c9;color:#2e7d32;}
+.n2{background:#fff9c4;color:#f57c00;}
+.n3{background:#ffd8b1;color:#e65100;}
+.n4{background:#ffcdd2;color:#c62828;}
+.n5{background:#e1bee7;color:#7b1fa2;}
+#pergunta{flex:1;display:flex;align-items:center;justify-content:center;padding:20px 0;}
+h2{font-size:clamp(20px,5vw,32px);color:#222;text-align:center;line-height:1.4;}
+#respostas{margin-top:10px;}
+button{
+    width:100%;
+    padding:clamp(14px,4vw,22px);
+    margin:10px 0;
+    font-size:clamp(16px,4vw,22px);
+    border:none;
+    border-radius:12px;
+    background:#2196f3;
+    color:#fff;
+    cursor:pointer;
+    transition:0.2s;
+}
+button:hover{background:#1976d2;transform:scale(1.02);}
+#placar{
+    font-size:clamp(20px,5vw,28px);
+    font-weight:bold;
+    color:#333;
+    margin-top:25px;
+    text-align:center;
+    padding-top:15px;
+    border-top:2px solid #eee;
+}
+</style>
+</head>
+<body>
+<div class="caixa">
+<h1>🎯 Jogo de Perguntas</h1>
+<span id="nivel" class="nivel n1">Nível 1/5 — Muito Fácil</span>
+<div id="pergunta"></div>
+<div id="respostas"></div>
+<p id="placar">Pontos: 0</p>
+</div>
+
+<script>
+const PERGUNTAS = [
+{texto:"Quantos dias tem uma semana?",respostas:["5","6","7"],certa:2,nivel:1},
+{texto:"Qual é a cor do céu em dia ensolarado?",respostas:["Verde","Azul","Roxo"],certa:1,nivel:1},
+{texto:"Quantas horas tem um dia?",respostas:["12","24","36"],certa:1,nivel:1},
+{texto:"Qual animal faz miau?",respostas:["Cachorro","Gato","Vaca"],certa:1,nivel:1},
+{texto:"Planeta onde vivemos?",respostas:["Marte","Júpiter","Terra"],certa:2,nivel:1},
+{texto:"Quantos pés tem uma aranha?",respostas:["4","6","8"],certa:2,nivel:1},
+{texto:"Fruta amarela com casca?",respostas:["Melancia","Banana","Morango"],certa:1,nivel:1},
+{texto:"Sol nasce de que direção?",respostas:["Oeste","Leste","Sul"],certa:1,nivel:1},
+{texto:"Dedos em uma mão?",respostas:["4","5","6"],certa:1,nivel:1},
+{texto:"Melhor amigo do homem?",respostas:["Gato","Cachorro","Passarinho"],certa:1,nivel:1},
+{texto:"Água sólida é?",respostas:["Vapor","Gelo","Névoa"],certa:1,nivel:1},
+{texto:"Estações do ano?",respostas:["2","3","4"],certa:2,nivel:1},
+{texto:"Qual é um inseto?",respostas:["Cobra","Formiga","Rato"],certa:1,nivel:1},
+{texto:"Plantas precisam de quê?",respostas:["Pedra","Sol","Plástico"],certa:1,nivel:1},
+{texto:"Meses em um ano?",respostas:["10","11","12"],certa:2,nivel:1},
+{texto:"Maior osso do corpo?",respostas:["Braço","Fêmur","Costela"],certa:1,nivel:1},
+{texto:"Qual é metal?",respostas:["Madeira","Ferro","Papel"],certa:1,nivel:1},
+{texto:"Rodas da bicicleta?",respostas:["1","2","3"],certa:1,nivel:1},
+{texto:"Animal com pescoço longo?",respostas:["Elefante","Girafa","Leão"],certa:1,nivel:1},
+{texto:"Gás principal do ar?",respostas:["Hidrogênio","Oxigênio","Cloro"],certa:1,nivel:1},
+{texto:"Capital do Brasil?",respostas:["São Paulo","Brasília","Rio"],certa:1,nivel:2},
+{texto:"Minutos em 1 hora?",respostas:["30","60","90"],certa:1,nivel:2},
+{texto:"Maior oceano?",respostas:["Atlântico","Índico","Pacífico"],certa:2,nivel:2},
+{texto:"Símbolo da água?",respostas:["CO2","H2O","O2"],certa:1,nivel:2},
+{texto:"Maior país do mundo?",respostas:["Brasil","China","Rússia"],certa:2,nivel:2},
+{texto:"Lados do triângulo?",respostas:["2","3","4"],certa:1,nivel:2},
+{texto:"Montanha mais alta?",respostas:["Kilimanjaro","Everest","Aconcágua"],certa:1,nivel:2},
+{texto:"Estados do Brasil?",respostas:["25","26","27"],certa:1,nivel:2},
+{texto:"Planeta Vermelho?",respostas:["Vênus","Marte","Saturno"],certa:1,nivel:2},
+{texto:"Maior mamífero?",respostas:["Elefante","Baleia Azul","Girafa"],certa:1,nivel:2},
+{texto:"Semanas em 1 ano?",respostas:["50","52","54"],certa:1,nivel:2},
+{texto:"Moeda do Brasil?",respostas:["Real","Dólar","Euro"],certa:0,nivel:2},
+{texto:"Graus de um círculo?",respostas:["90","180","360"],certa:2,nivel:2},
+{texto:"Rio mais longo do mundo?",respostas:["Amazonas","Nilo","Mississipi"],certa:1,nivel:2},
+{texto:"Dentes de um adulto?",respostas:["28","30","32"],certa:2,nivel:2},
+{texto:"Estrela mais próxima da Terra?",respostas:["Lua","Sol","Marte"],certa:1,nivel:2},
+{texto:"Continentes no mundo?",respostas:["5","6","7"],certa:2,nivel:2},
+{texto:"Maior estado do Brasil?",respostas:["Pará","Amazonas","Mato Grosso"],certa:1,nivel:2},
+{texto:"Quem pintou a Mona Lisa?",respostas:["Van Gogh","Picasso","Da Vinci"],certa:2,nivel:2},
+{texto:"Camada externa da Terra?",respostas:["Núcleo","Manto","Crosta"],certa:2,nivel:2},
+{texto:"Fórmula da área do círculo?",respostas:["2πr","πr²","2πr²"],certa:1,nivel:3},
+{texto:"Ano que o homem foi à Lua?",respostas:["1965","1969","1973"],certa:1,nivel:3},
+{texto:"Elementos na tabela periódica?",respostas:["112","118","124"],certa:1,nivel:3},
+{texto:"Quantos ossos tem o corpo humano?",respostas:["206","210","215"],certa:0,nivel:3},
+{texto:"Velocidade da luz em km/s?",respostas:["300000","150000","450000"],certa:0,nivel:3},
+{texto:"Brasil descoberto em qual ano?",respostas:["1492","1500","1530"],certa:1,nivel:3},
+{texto:"Maior planeta do Sistema Solar?",respostas:["Saturno","Júpiter","Urano"],certa:1,nivel:3},
+{texto:"Cromossomos de uma célula humana?",respostas:["23","46","48"],certa:1,nivel:3},
+{texto:"Capital da Austrália?",respostas:["Sydney","Melbourne","Camberra"],certa:2,nivel:3},
+{texto:"Litros de sangue num adulto?",respostas:["3-4","5-6","7-8"],certa:1,nivel:3},
+{texto:"Símbolo do ouro?",respostas:["Ag","Au","Fe"],certa:1,nivel:3},
+{texto:"Segunda Guerra terminou em?",respostas:["1945","1944","1946"],certa:0,nivel:3},
+{texto:"Maior deserto do mundo?",respostas:["Saara","Gobi","Antártica"],certa:2,nivel:3},
+{texto:"Jogadores em campo por time?",respostas:["10","11","12"],certa:1,nivel:3},
+{texto:"Unidade de força?",respostas:["Joule","Newton","Pascal"],certa:1,nivel:3},
+{texto:"Penicilina descoberta por quem?",respostas:["Pasteur","Fleming","Curie"],certa:1,nivel:3},
+{texto:"Fórmula da água oxigenada?",respostas:["H2O","H2O2","HO2"],certa:1,nivel:3},
+{texto:"República no Brasil em qual ano?",respostas:["1888","1889","1890"],certa:1,nivel:3},
+{texto:"Menor planeta do Sistema Solar?",respostas:["Vênus","Mercúrio","Marte"],certa:1,nivel:3},
+{texto:"País mais populoso do mundo?",respostas:["Brasil","Índia","China"],certa:1,nivel:3},
+{texto:"Constante de Planck é aproximadamente?",respostas:["6,63×10⁻³⁴","9,81×10⁻¹⁵","3×10⁸"],certa:0,nivel:4},
+{texto:"Revolução Francesa em qual ano?",respostas:["1776","1789","1799"],certa:1,nivel:4},
+{texto:"Segunda Lei de Newton?",respostas:["F=ma","E=mc²","V=d/t"],certa:0,nivel:4},
+{texto:"Nervos cranianos no ser humano?",respostas:["10","12","14"],certa:1,nivel:4},
+{texto:"Distância Terra-Sol em km?",respostas:["150 milhões","100 milhões","200 milhões"],certa:0,nivel:4},
+{texto:"Quem descobriu a radiação?",respostas:["Fleming","Curie","Darwin"],certa:1,nivel:4},
+{texto:"Fórmula do ácido clorídrico?",respostas:["HCl","H2SO4","HNO3"],certa:0,nivel:4},
+{texto:"Menor país do mundo?",respostas:["Mônaco","Vaticano","Nauru"],certa:1,nivel:4},
+{texto:"Velocidade do som no ar a 20°C?",respostas:["300m/s","343m/s","400m/s"],certa:1,nivel:4},
+{texto:"pH de uma solução neutra?",respostas:["0","7","14"],certa:1,nivel:4},
+{texto:"Autor de A Origem das Espécies?",respostas:["Pasteur","Darwin","Mendel"],certa:1,nivel:4},
+{texto:"Capital do Cazaquistão?",respostas:["Astana","Tashkent","Bishkek"],certa:0,nivel:4},
+{texto:"Valor de π com 4 casas?",respostas:["3,1415","3,1416","3,1417"],certa:1,nivel:4},
+{texto:"Quantos litros tem 1m³?",respostas:["100","500","1000"],certa:2,nivel:4},
+{texto:"Ano da queda do Império Romano?",respostas:["476","500","395"],certa:0,nivel:4},
+{texto:"Elemento mais abundante no universo?",respostas:["Oxigênio","Hidrogênio","Hélio"],certa:1,nivel:4},
+{texto:"Número atômico do Carbono?",respostas:["4","6","8"],certa:1,nivel:4},
+{texto:"Fórmula da lei de Ohm?",respostas:["V=I/R","I=V/R","R=V/I"],certa:1,nivel:4},
+{texto:"Segundos em 1 hora?",respostas:["360","3600","36000"],certa:1,nivel:4},
+{texto:"Símbolo do Sódio?",respostas:["So","Na","K"],certa:1,nivel:4},
+{texto:"Derivada de f(x)=x³ é?",respostas:["x²","2x²","3x²"],certa:2,nivel:5},
+{texto:"Princípios Matemáticos de Newton em?",respostas:["1687","1700","1650"],certa:0,nivel:5},
+{texto:"Constante gravitacional G é?",respostas:["6,67×10⁻¹¹","9,81×10⁻⁶","3×10⁸"],certa:0,nivel:5},
+{texto:"Aminoácidos nas proteínas humanas?",respostas:["18","20","22"],certa:1,nivel:5},
+{texto:"Raízes de x²-5x+6=0 são?",respostas:["2 e 3","1 e 6","-2 e -3"],certa:0,nivel:5},
+{texto:"Relatividade Geral em?",respostas:["1905","1915","1925"],certa:1,nivel:5},
+{texto:"Raio da Terra em km?",respostas:["5371","6371","7371"],certa:1,nivel:5},
+{texto:"Elétrons na camada de valência dos gases nobres?",respostas:["6","7","8"],certa:2,nivel:5},
+{texto:"Integral de 2x dx é?",respostas:["x²+C","2x²+C","x+C"],certa:0,nivel:5},
+{texto:"Zero absoluto em °C é?",respostas:["-273,15","-250","-300"],certa:0,nivel:5},
+{texto:"Primeiro satélite artificial em?",respostas:["1955","1957","1961"],certa:1,nivel:5},
+{texto:"Massa do elétron em kg?",respostas:["9,11×10⁻³¹","1,67×10⁻²⁷","6,67×10⁻¹¹"],certa:0,nivel:5},
+{texto:"Síndrome de Down tem quantos cromossomos?",respostas:["46","47","48"],certa:1,nivel:5},
+{texto:"sen(2x) é igual a?",respostas:["senx·cosx","2senx·cosx","sen²x-cos²x"],certa:1,nivel:5},
+{texto:"UNICEF criada em?",respostas:["1945","1946","1950"],certa:1,nivel:5},
+{texto:"Concentração de H⁺ em pH=4 é?",respostas:["10⁻⁴","10⁻⁶","10⁻⁸"],certa:0,nivel:5},
+{texto:"Um ano-luz é aproximadamente em km?",respostas:["9,46×10¹²","1,5×10⁸","3×10⁵"],certa:0,nivel:5},
+{texto:"Número atômico do Ferro?",respostas:["26","56","58"],certa:0,nivel:5},
+{texto:"Probabilidade de 3 caras seguidas na moeda?",respostas:["1/4","1/8","1/16"],certa:1,nivel:5},
+{texto:"Velocidade de fuga da Terra em km/s?",respostas:["9,5","11,2","15,8"],certa:1,nivel:5}
+];
+
+let indice=0, pontos=0;
+const nomesNivel=["","Nível 1/5 — Muito Fácil","Nível 2/5 — Fácil","Nível 3/5 — Médio","Nível 4/5 — Difícil","Nível 5/5 — Muito Difícil"];
+const classeNivel=["","n1","n2","n3","n4","n5"];
+
+function carregar(){
+    const p=PERGUNTAS[indice];
+    document.getElementById("nivel").textContent=nomesNivel[p.nivel];
+    document.getElementById("nivel").className="nivel "+classeNivel[p.nivel];
+    document.getElementById("pergunta").innerHTML="<h2>"+p.texto+"</h2>";
+    const div=document.getElementById("respostas");
+    div.innerHTML="";
+    p.respostas.forEach((r,i)=>{
+        const b=document.createElement("button");
+        b.textContent=r;
+        b.onclick=()=>verificar(i);
+        div.appendChild(b);
+    });
+}
+
+function verificar(i){
+    if(i===PERGUNTAS[indice].certa){pontos++;alert("✅ Acertou!");}
+    else alert("❌ Errou!");
+    indice++;
+    if(indice<PERGUNTAS.length) carregar();
+    else {
+        document.getElementById("nivel").textContent="🏆 Fim!";
+        document.getElementById("nivel").className="nivel n5";
+        document.getElementById("pergunta").innerHTML="<h2>Parabéns!</h2>";
+        document.getElementById("respostas").innerHTML="<h3>Você fez "+pontos+" de "+PERGUNTAS.length+" pontos!</h3>";
+    }
+    document.getElementById("placar").textContent="Pontos: "+pontos;
+}
+
+carregar();
+</script>
+</body>
+</html>
